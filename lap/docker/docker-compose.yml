@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+
+  analytics-db:
+    image: postgres:16
+    container_name: lap-analytics-db
+    restart: always
+    environment:
+      POSTGRES_DB: lap
+      POSTGRES_USER: lap_admin
+      POSTGRES_PASSWORD: lap_admin_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - lap_db_data:/var/lib/postgresql/data
+
+  flyway:
+    image: flyway/flyway:10
+    container_name: lap-flyway
+    command: -url=jdbc:postgresql://analytics-db:5432/lap -user=lap_admin -password=lap_admin_password migrate
+    volumes:
+      - ../flyway/sql:/flyway/sql
+    depends_on:
+      - analytics-db
+
+  analytics-batch:
+    image: python:3.12-slim
+    container_name: lap-batch
+    working_dir: /app
+    volumes:
+      - ../batch:/app
+    depends_on:
+      - analytics-db
+    command: sleep infinity
+
+volumes:
+  lap_db_data:
