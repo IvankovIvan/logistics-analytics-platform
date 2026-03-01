@@ -8,7 +8,9 @@ CREATE TABLE raw.shipment_line (
     revenue         numeric(18,2) NOT NULL,
     cost            numeric(18,2) NOT NULL,
 
-    CONSTRAINT shipment_line_pk PRIMARY KEY (barcode_id),
     CONSTRAINT shipment_line_barcode_positive CHECK (barcode_id > 0)
 )
 PARTITION BY RANGE (shipment_date);
+
+CREATE UNIQUE INDEX idx_shipment_line_barcode
+ON raw.shipment_line (barcode_id);
