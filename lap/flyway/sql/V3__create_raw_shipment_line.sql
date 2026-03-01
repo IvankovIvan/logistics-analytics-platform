@@ -11,6 +11,3 @@ CREATE TABLE raw.shipment_line (
     CONSTRAINT shipment_line_barcode_positive CHECK (barcode_id > 0)
 )
 PARTITION BY RANGE (shipment_date);
-
-CREATE UNIQUE INDEX idx_shipment_line_barcode
-ON raw.shipment_line (barcode_id);
